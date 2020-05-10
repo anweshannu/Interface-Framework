@@ -1,16 +1,18 @@
+//Java program to do CRUD operations on MySQL, SQLite database servers.
+
 import java.sql.*;
 import java.util.*;
 import java.util.ArrayList;
 
 interface MyDatabase
 {
-	public Connection database_();
+	public Connection getConnection();
 }
 
 class MySQLServer implements MyDatabase
 {
 	Connection con = null;
-	public Connection database_()
+	public Connection getConnection()
 	{
 
 		System.out.println("connected to MySQL");
@@ -31,7 +33,7 @@ class MySQLServer implements MyDatabase
 class SQLiteServer implements MyDatabase
 {
 
-	public Connection database_()
+	public Connection getConnection()
 	{
 		Connection con = null;
 		System.out.println("connected to SQLite");
@@ -53,9 +55,7 @@ class SQLiteServer implements MyDatabase
 
 class Framework2
 {
-	// Connection con = null;
 	public static String table_name = "Employee";	
-
 	public static Connection con = null;
 	public static Statement st = null;
 	public static ResultSet rs = null;
@@ -70,7 +70,7 @@ class Framework2
 	public static void main(String argv[])
 	{
 		String className;
-		if (argv.length == 1 )
+		if (argv.length == 1)
 		{
 			className = argv[0];
 		}
@@ -84,7 +84,7 @@ class Framework2
 		try
 		{
 			MyDatabase crud = (MyDatabase)Class.forName(className).newInstance();
-			con = crud.database_();
+			con = crud.getConnection();
 			if (con != null)
 			{
 				getColumnNames();
