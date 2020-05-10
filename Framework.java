@@ -1,24 +1,28 @@
-//Java program to do CRUD operations on MySQL, SQLite database servers.
+//Java program to do CRUD operations using MySQL, SQLite database servers.
 
 import java.sql.*;
 import java.util.*;
 import java.util.ArrayList;
 
-interface MyDatabase
+interface DatabaseInterface
 {
 	public Connection getConnection();
 }
 
-class MySQLServer implements MyDatabase
+class MySQLServer implements DatabaseInterface
 {
 	Connection con = null;
 	public Connection getConnection()
 	{
 
-		System.out.println("connected to MySQL");
+		System.out.println("connected to MySQL server.");
 		try
 		 {
-			con = DriverManager.getConnection("jdbc:mysql://165.22.14.77/dbAnwesh?autoReconnect=true&useSSL=false", "root", "pwd");
+		 	System.out.print("Please enter database name: ");
+		 	Scanner scan = new Scanner(System.in);
+		 	String database_name = scan.next();
+
+			con = DriverManager.getConnection("jdbc:mysql://165.22.14.77/" + database_name + "?autoReconnect=true&useSSL=false", "root", "pwd");
 		 }
 
 		catch (SQLException e)
@@ -30,32 +34,36 @@ class MySQLServer implements MyDatabase
 	}
 }
 
-class SQLiteServer implements MyDatabase
+class SQLiteServer implements DatabaseInterface
 {
 
 	public Connection getConnection()
 	{
 		Connection con = null;
-		System.out.println("connected to SQLite");
+		System.out.println("connected to SQLite server.");
 		try
 		 {
+		 	System.out.print("Please enter database name: ");
+		 	Scanner scan = new Scanner(System.in);
+		 	String database_name = scan.next();
 			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection("jdbc:sqlite:main.db");
+			con = DriverManager.getConnection("jdbc:sqlite:" + database_name + ".db");
 
 		 }
 
 		catch (Exception e)
 		 {
 		 	System.out.println("Database Connection failed.");
+		 	System.out.println("Usage: java -classpath \".:sqlite-jdbc-3.30.1.jar\" Framework SQLiteServer");
 		 	System.out.println("Reason: " + e.getMessage());
 		 }
 		 return con;
 	}
 }
 
-class Framework2
+class Framework
 {
-	public static String table_name = "Employee";	
+	public static String table_name = null;	
 	public static Connection con = null;
 	public static Statement st = null;
 	public static ResultSet rs = null;
@@ -76,17 +84,18 @@ class Framework2
 		}
 		else
 		{
-			Scanner scan = new Scanner(System.in);
-			System.out.print("Please enter database server name: ");
+			System.out.print("Servers available: MySQLServer, SQLiteServer \nPlease enter database name: ");
 			className = scan.nextLine();
 		}
-		System.out.print(className);
+		// System.out.print(className);
 		try
 		{
-			MyDatabase crud = (MyDatabase)Class.forName(className).newInstance();
+			DatabaseInterface crud = (DatabaseInterface)Class.forName(className).newInstance();
 			con = crud.getConnection();
 			if (con != null)
 			{
+				System.out.print("Enter table name: ");
+				table_name = scan.next();
 				getColumnNames();
 				displayMenu();
 			}
@@ -259,12 +268,7 @@ class Framework2
 			if(mode == 's')
 			{
 				rs = st.executeQuery(sql_query);
-				if(rs.next())
-				{
-					rs = st.executeQuery(sql_query);
-					rows_effected = 1;
-				}
-
+				rows_effected = 1;
 			}
 			else
 			{
