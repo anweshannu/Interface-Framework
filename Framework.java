@@ -54,7 +54,7 @@ class SQLiteServer implements DatabaseInterface
 		catch (Exception e)
 		 {
 		 	System.out.println("Database Connection failed.");
-		 	System.out.println("Usage: java -classpath \".:sqlite-jdbc-3.30.1.jar\" Framework SQLiteServer");
+		 	System.out.println("Please set Class path.");
 		 	System.out.println("Reason: " + e.getMessage());
 		 }
 		 return con;
